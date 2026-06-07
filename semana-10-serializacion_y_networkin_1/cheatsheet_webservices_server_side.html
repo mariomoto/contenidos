@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cheat Sheet - Web Services Server Side</title>
+    <style>
+        :root {
+            --bg: #f3efe7;
+            --ink: #1f1f1f;
+            --muted: #5e5a52;
+            --card: #fffdf8;
+            --line: #ddd3c2;
+            --accent: #c44a32;
+            --accent-2: #1f6b75;
+            --ok: #2d7c3f;
+            --warn: #9c5c00;
+            --err: #b3261e;
+            --code-bg: #1b1f23;
+            --code-ink: #f6f8fa;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Trebuchet MS", "Gill Sans", "Segoe UI", sans-serif;
+            background:
+                radial-gradient(circle at 15% 10%, #fff7e5 0%, transparent 30%),
+                radial-gradient(circle at 85% 0%, #e6f5f7 0%, transparent 28%),
+                var(--bg);
+            color: var(--ink);
+            line-height: 1.5;
+        }
+
+        .shell {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .hero {
+            border: 2px solid var(--line);
+            background: linear-gradient(135deg, #fff8ed 0%, #f9fff8 100%);
+            border-radius: 18px;
+            padding: 24px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::after {
+            content: "SERVER SIDE";
+            position: absolute;
+            right: -8px;
+            top: -2px;
+            font-size: 44px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            color: rgba(196, 74, 50, 0.08);
+            transform: rotate(-3deg);
+            pointer-events: none;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2rem;
+            letter-spacing: 0.2px;
+        }
+
+        .subtitle {
+            margin-top: 8px;
+            color: var(--muted);
+            max-width: 72ch;
+        }
+
+        .quick {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .pill {
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            padding: 7px 12px;
+            background: #ffffff;
+            font-size: 0.92rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 14px;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            padding: 16px;
+            box-shadow: 0 5px 14px rgba(31, 31, 31, 0.06);
+        }
+
+        .card h2 {
+            margin: 0 0 8px;
+            font-size: 1.12rem;
+        }
+
+        .kicker {
+            display: inline-block;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--accent-2);
+            background: #e8f6f8;
+            border: 1px solid #b9dfe5;
+            border-radius: 999px;
+            padding: 2px 10px;
+        }
+
+        pre {
+            margin: 10px 0 0;
+            background: var(--code-bg);
+            color: var(--code-ink);
+            border-radius: 10px;
+            padding: 11px;
+            overflow-x: auto;
+            font-size: 0.83rem;
+            line-height: 1.4;
+        }
+
+        code {
+            font-family: "Consolas", "Courier New", monospace;
+        }
+
+        ul {
+            margin: 8px 0 0;
+            padding-left: 18px;
+        }
+
+        .status {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .status span {
+            border-radius: 8px;
+            border: 1px solid transparent;
+            padding: 4px 8px;
+            font-size: 0.82rem;
+            font-weight: 700;
+        }
+
+        .ok {
+            color: var(--ok);
+            background: #edf8f0;
+            border-color: #b9dfc1;
+        }
+
+        .warn {
+            color: var(--warn);
+            background: #fff6e8;
+            border-color: #f3d6a7;
+        }
+
+        .err {
+            color: var(--err);
+            background: #fdeeee;
+            border-color: #f2bbbb;
+        }
+
+        .footer {
+            margin-top: 16px;
+            color: var(--muted);
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        .fade-in {
+            animation: rise 500ms ease both;
+        }
+
+        .fade-in:nth-child(2) { animation-delay: 80ms; }
+        .fade-in:nth-child(3) { animation-delay: 140ms; }
+        .fade-in:nth-child(4) { animation-delay: 200ms; }
+        .fade-in:nth-child(5) { animation-delay: 260ms; }
+        .fade-in:nth-child(6) { animation-delay: 320ms; }
+
+        @keyframes rise {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .hero::after {
+                font-size: 28px;
+                right: -6px;
+                top: 2px;
+            }
+
+            h1 {
+                font-size: 1.55rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="shell">
+        <section class="hero fade-in">
+            <h1>Cheat Sheet: Web Services Server Side (Flask)</h1>
+            <p class="subtitle">
+                Guia rapida para construir APIs server side en Python con Flask. Incluye rutas,
+                metodos HTTP, parsing de request, respuestas JSON, manejo de errores,
+                validaciones, seguridad base y pruebas.
+            </p>
+            <div class="quick">
+                <div class="pill">Stack: Python + Flask + requests</div>
+                <div class="pill">Formato comun: JSON</div>
+                <div class="pill">Base local: http://localhost:4444</div>
+                <div class="pill">Regla: endpoints pequenos y claros</div>
+            </div>
+        </section>
+
+        <section class="grid">
+            <article class="card fade-in">
+                <span class="kicker">Boot</span>
+                <h2>1. Estructura minima</h2>
+                <pre><code>from flask import Flask
+
+app = Flask(__name__)
+
+@app.get("/")
+def health():
+    return {"status": "ok"}
+
+if __name__ == "__main__":
+    app.run(host="localhost", port=4444)</code></pre>
+            </article>
+
+            <article class="card fade-in">
+                <span class="kicker">Routing</span>
+                <h2>2. Endpoints y metodos</h2>
+                <pre><code>@app.get("/items")
+def list_items():
+    ...
+
+@app.post("/items")
+def create_item():
+    ...
+
+@app.put("/items/&lt;int:item_id&gt;")
+def replace_item(item_id):
+    ...
+
+@app.delete("/items/&lt;int:item_id&gt;")
+def delete_item(item_id):
+    ...</code></pre>
+                <ul>
+                    <li>GET: leer recurso</li>
+                    <li>POST: crear recurso</li>
+                    <li>PUT/PATCH: actualizar</li>
+                    <li>DELETE: borrar</li>
+                </ul>
+            </article>
+
+            <article class="card fade-in">
+                <span class="kicker">Route</span>
+                <h2>2B. Ejemplos de app.route()</h2>
+                <pre><code>from flask import request
+
+# 1) Forma clasica con metodos explicitos
+@app.route("/ping", methods=["GET"])
+def ping():
+    return {"msg": "pong"}
+
+# 2) Mismo endpoint con GET y POST
+@app.route("/notes", methods=["GET", "POST"])
+def notes():
+    if request.method == "GET":
+        return {"data": []}
+    payload = request.get_json(force=True)
+    return {"created": payload}, 201
+
+# 3) Parametro dinamico y conversor de tipo
+@app.route("/users/&lt;int:user_id&gt;", methods=["GET"])
+def get_user(user_id):
+    return {"id": user_id}
+
+# 4) Segmento tipo path (incluye /)
+@app.route("/files/&lt;path:file_path&gt;", methods=["GET"])
+def file_info(file_path):
+    return {"path": file_path}
+
+# 5) Dos rutas para la misma funcion
+@app.route("/about")
+@app.route("/acerca")
+def about():
+    return {"service": "server-side api"}</code></pre>
+                <ul>
+                    <li>Usa methods para controlar que verbos acepta cada ruta</li>
+                    <li>Conversores utiles: string, int, float, path, uuid</li>
+                </ul>
+            </article>
+
+            <article class="card fade-in">
+                <span class="kicker">Input</span>
+                <h2>3. Leer parametros y body</h2>
+                <pre><code>from flask import request
+
+@app.get("/search")
+def search():
+    q = request.args.get("q", default="", type=str)
+    limit = request.args.get("limit", default=10, type=int)
+    return {"q": q, "limit": limit}
+
+@app.post("/sum")
+def do_sum():
+    payload = request.get_json(force=True)
+    a = payload["a"]
+    b = payload["b"]
+    return {"result": a + b}</code></pre>
+            </article>
+
+            <article class="card fade-in">
+                <span class="kicker">Output</span>
+                <h2>4. Respuestas y status code</h2>
+                <pre><code>from flask import Response
+import json
+
+@app.post("/users")
+def create_user():
+    user = {"id": 7, "name": "Luna"}
+    return user, 201
+
+@app.get("/plain")
+def plain_text():
+    return Response(
+        response="pong",
+        status=200,
+        content_type="text/plain"
+    )
+
+@app.get("/custom")
+def custom_json():
+    body = json.dumps({"msg": "accepted"})
+    return Response(body, status=202, content_type="application/json")</code></pre>
+                <div class="status">
+                    <span class="ok">2xx exito</span>
+                    <span class="warn">4xx error cliente</span>
+                    <span class="err">5xx error servidor</span>
+                </div>
+            </article>
+
+            <article class="card fade-in">
+                <span class="kicker">Errors</span>
+                <h2>5. Manejo de errores</h2>
+                <pre><code>from flask import abort
+
+@app.get("/users/&lt;int:user_id&gt;")
+def get_user(user_id):
+    user = DB.get(user_id)
+    if user is None:
+        abort(404)
+    return user
+
+@app.errorhandler(400)
+def bad_request(_):
+    return {"error": "bad request"}, 400
+
+@app.errorhandler(404)
+def not_found(_):
+    return {"error": "not found"}, 404</code></pre>
+                <ul>
+                    <li>No ocultes errores con status 200</li>
+                    <li>Devuelve mensajes claros y consistentes</li>
+                </ul>
+            </article>
+
+            <article class="card fade-in">
+                <span class="kicker">Validation</span>
+                <h2>6. Validacion basica</h2>
+                <pre><code>@app.post("/products")
+def create_product():
+    data = request.get_json(force=True)
+
+    required = ["name", "price"]
+    missing = [k for k in required if k not in data]
+    if missing:
+        return {"error": "missing fields", "fields": missing}, 400
+
+    if not isinstance(data["price"], (int, float)):
+        return {"error": "price must be numeric"}, 400
+
+    return {"ok": True}, 201</code></pre>
+            </article>
+
+            <article class="card fade-in">
+                <span class="kicker">Security</span>
+                <h2>7. Seguridad minima</h2>
+                <ul>
+                    <li>Jamás hardcodear claves en el codigo</li>
+                    <li>Usar variables de entorno para secretos</li>
+                    <li>Validar entradas siempre</li>
+                    <li>Limitar payload size y aplicar timeout</li>
+                    <li>No exponer stacktrace en produccion</li>
+                    <li>Usar HTTPS fuera de local</li>
+                </ul>
+                <pre><code>import os
+API_KEY = os.getenv("MY_API_KEY")</code></pre>
+            </article>
+
+            <article class="card fade-in">
+                <span class="kicker">Testing</span>
+                <h2>8. Probar desde cliente (requests)</h2>
+                <pre><code>import requests
+
+base = "http://localhost:4444"
+
+r = requests.get(f"{base}/search", params={"q": "cat", "limit": 2})
+print(r.status_code, r.json())
+
+body = {"a": 10, "b": 5}
+r = requests.post(f"{base}/sum", json=body)
+print(r.status_code, r.json())</code></pre>
+            </article>
+
+            <article class="card fade-in">
+                <span class="kicker">Checklist</span>
+                <h2>9. Before deploy</h2>
+                <ul>
+                    <li>Separar config dev/prod</li>
+                    <li>Logging estructurado y sin datos sensibles</li>
+                    <li>Tests para rutas felices y errores</li>
+                    <li>Rate limiting en endpoints publicos</li>
+                    <li>Documentar API (README u OpenAPI)</li>
+                </ul>
+                <pre><code># Dev only
+# flask --app app run --port 4444
+
+# Produccion: usar WSGI server (gunicorn/uwsgi) + reverse proxy</code></pre>
+            </article>
+        </section>
+
+        <p class="footer">
+            Tip docente: en notebooks, si cambias de servidor en el mismo puerto,
+            detiene el anterior antes de iniciar el nuevo para evitar rutas "fantasma".
+        </p>
+    </main>
+</body>
+</html>

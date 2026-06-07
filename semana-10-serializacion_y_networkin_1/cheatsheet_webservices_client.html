@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cheat Sheet – Web Services Client Side (IIC2233)</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: #0f0f23;
+            color: #e0e0e0;
+            padding: 2rem;
+            line-height: 1.6;
+        }
+        h1 {
+            text-align: center;
+            color: #7ec8e3;
+            margin-bottom: 0.5rem;
+            font-size: 2rem;
+        }
+        .subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .card {
+            background: #1a1a2e;
+            border-radius: 12px;
+            border: 1px solid #2a2a4a;
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+            perspective: 1000px;
+        }
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(126, 200, 227, 0.15);
+        }
+        .card-inner {
+            position: relative;
+            height: 220px;
+            transition: transform 0.5s;
+            transform-style: preserve-3d;
+        }
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            overflow-y: auto;
+            overscroll-behavior: contain;
+        }
+        .card-back {
+            transform: rotateY(180deg);
+            background: #16213e;
+            border-radius: 12px;
+        }
+        .card-tag {
+            display: inline-block;
+            background: #7ec8e3;
+            color: #0f0f23;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 0.8rem;
+            align-self: flex-start;
+        }
+        .card-front h3 {
+            color: #fff;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+        .card-front p {
+            color: #aaa;
+            font-size: 0.85rem;
+        }
+        .card-back pre {
+            background: #0d1117;
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 0.78rem;
+            line-height: 1.5;
+            color: #c9d1d9;
+        }
+        .card-back code { font-family: 'JetBrains Mono', 'Fira Code', monospace; }
+        .card-back p {
+            font-size: 0.85rem;
+            color: #ccc;
+            margin-top: 0.5rem;
+        }
+        .flip-hint {
+            text-align: center;
+            color: #555;
+            font-size: 0.75rem;
+            margin-top: 0.5rem;
+        }
+        .keyword { color: #ff79c6; }
+        .string { color: #a5d6ff; }
+        .comment { color: #6a737d; }
+        .func { color: #d2a8ff; }
+        .section-title {
+            grid-column: 1 / -1;
+            color: #7ec8e3;
+            font-size: 1.3rem;
+            border-bottom: 1px solid #2a2a4a;
+            padding-bottom: 0.5rem;
+            margin-top: 1rem;
+        }
+        @media (max-width: 600px) {
+            body { padding: 1rem; }
+            .grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<h1>⚡ Web Services – Client Side</h1>
+<p class="subtitle">IIC2233 Programación Avanzada · Cheat Sheet &amp; Flash Cards · Click en cada tarjeta para ver el código</p>
+
+<div class="grid">
+
+    <!-- SECCIÓN: CONCEPTOS FUNDAMENTALES -->
+    <h2 class="section-title">📚 Conceptos Fundamentales</h2>
+
+    <div class="card" onclick="this.classList.toggle('flipped')">
+        <div class="card-inner">
+            <div class="card-front">
+                <span class="card-tag">Concepto</span>
+                <h3>¿Qué es un Web Service?</h3>
+                <p>Un servicio accesible a través de la red que permite la comunicación entre aplicaciones usando protocolos estándar (HTTP/HTTPS).</p>
+            </div>
+            <div class="card-back">
+                <span class="card-tag">Detalle</span>
+                <p><strong>Componentes clave:</strong></p>
+                <p>• <strong>Cliente:</strong> envía requests (tu código Python)<br>
+                   • <strong>Servidor:</strong> procesa y responde<br>
+                   • <strong>Protocolo:</strong> HTTP/HTTPS<br>
+                   • <strong>Formato:</strong> generalmente JSON o XML</p>
+                <p style="margin-top:0.8rem">El cliente NO necesita saber cómo está implementado el servidor internamente.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="card" onclick="this.classList.toggle('flipped')">
+        <div class="card-inner">
+            <div class="card-front">
+                <span class="card-tag">Concepto</span>
+                <h3>URL Base + Endpoint</h3>
+                <p>Toda API tiene una URL base (prefijo) y endpoints (rutas) que definen a qué recurso accedes.</p>
+            </div>
+            <div class="card-back">
+                <span class="card-tag">Ejemplo</span>
+                <pre><code><span class="comment"># URL Base: prefijo común a todas las rutas</span>
+BASE = <span class="string">"https://dummyjson.com/"</span>
+
+<span class="comment"># Endpoints: rutas específicas</span>
+endpoint_recetas = <span class="string">"recipes/"</span>
+endpoint_productos = <span class="string">"products/"</span>
+
+<span class="comment"># URL final = BASE + endpoint</span>
+url = BASE + endpoint_recetas
+<span class="comment"># → "https://dummyjson.com/recipes/"</span></code></pre>
+            </div>
+        </div>
+    </div>
+
+    <div class="card" onclick="this.classList.toggle('flipped')">
+        <div class="card-inner">
+            <div class="card-front">
+                <span class="card-tag">Concepto</span>
+                <h3>Métodos HTTP</h3>
+                <p>Definen la acción que quieres realizar sobre un recurso del servidor.</p>
+            </div>
+            <div class="card-back">
+                <span class="card-tag">Resumen</span>
+                <p><strong>GET</strong> → Obtener/consultar datos<br>
+                   <strong>POST</strong> → Crear un recurso nuevo<br>
+                   <strong>PUT</strong> → Reemplazar un recurso completo<br>
+                   <strong>PATCH</strong> → Modificar parcialmente<br>
+                   <strong>DELETE</strong> → Eliminar un recurso</p>
+                <pre><code>requests.get(url)
+requests.post(url, data=body)
+requests.put(url, data=body)
+requests.delete(url)</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <div class="card" onclick="this.classList.toggle('flipped')">
+        <div class="card-inner">
+            <div class="card-front">
+                <span class="card-tag">Concepto</span>
+                <h3>Status Codes</h3>
+                <p>Códigos numéricos que indican el resultado de la petición HTTP.</p>
+            </div>
+            <div class="card-back">
+                <span class="card-tag">Códigos comunes</span>
+                <p><strong>2xx – Éxito:</strong><br>
+                   200 OK · 201 Created · 204 No Content</p>
+                <p><strong>4xx – Error del cliente:</strong><br>
+                   400 Bad Request · 401 Unauthorized<br>
+                   403 Forbidden · 404 Not Found</p>
+                <p><strong>5xx – Error del servidor:</strong><br>
+                   500 Internal Server Error</p>
+                <pre><code><span class="keyword">if</span> resp.status_code == <span class="string">200</span>:
+    data = resp.json()</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECCIÓN: LIBRERÍA REQUESTS -->
+    <h2 class="section-title">🐍 Librería <code>requests</code></h2>
+
+    <div class="card" onclick="this.classList.toggle('flipped')">
+        <div class="card-inner">
+            <div class="card-front">
+                <span class="card-tag">Básico</span>
+                <h3>Instalación e importación</h3>
+                <p>La librería requests es externa y debe instalarse con pip.</p>
+            </div>
+            <div class="card-back">
+                <span class="card-tag">Código</span>
+                <pre><code><span class="comment"># Instalación (en terminal)</span>
+python3 -m pip install requests
+
+<span class="comment"># Importación</span>
+<span class="keyword">import</span> requests</code></pre>
+                <p>Si <code>python3</code> no funciona, prueba con <code>python</code>, <code>py</code> o <code>py3</code>.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="card" onclick="this.classList.toggle('flipped')">
+        <div class="card-inner">
+            <div class="card-front">
+                <span class="card-tag">GET</span>
+                <h3>Consulta GET básica</h3>
+                <p>Usa requests.get(url) para obtener datos de un servidor. Retorna un objeto Response.</p>
+            </div>
+            <div class="card-back">
+                <span class="card-tag">Código</span>
+                <pre><code><span class="keyword">import</span> requests
+
+url = <span class="string">"https://api.github.com/repos/IIC2233/Syllabus/contents/Actividades"</span>
+respuesta = requests.get(url)
+
+<span class="comment"># Verificar estado</span>
+print(respuesta.status_code)  <span class="comment"># 200</span>
+
+<span class="comment"># Obtener datos como dict/list</span>
+data = respuesta.json()</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <div class="card" onclick="this.classList.toggle('flipped')">
+        <div class="card-inner">
+            <div class="card-front">
+                <span class="card-tag">GET</span>
+                <h3>Parámetros de consulta (params)</h3>
+                <p>Dos formas de pasar parámetros: en la URL directamente o con el argumento params (recomendado).</p>
+            </div>
+            <div class="card-back">
+                <span class="card-tag">Código</span>
+                <pre><code><span class="comment"># ❌ En la URL (menos legible)</span>
+url = <span class="string">"https://api.com/search?q=python&limit=5"</span>
+resp = requests.get(url)
+
+<span class="comment"># ✅ Con params (recomendado)</span>
+parametros = {
+    <span class="string">"q"</span>: <span class="string">"python"</span>,
+    <span class="string">"limit"</span>: 5
+}
+resp = requests.get(
+    <span class="string">"https://api.com/search"</span>,
+    params=parametros
+)</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <div class="card" onclick="this.classList.toggle('flipped')">
+        <div class="card-inner">
+            <div class="card-front">
+                <span class="card-tag">POST</span>
+                <h3>Crear recursos con POST</h3>
+                <p>Envía datos al servidor para crear un nuevo recurso. Usa el parámetro data o json.</p>
+            </div>
+            <div class="card-back">
+                <span class="card-tag">Código</span>
+                <pre><code>data = {
+    <span class="string">"title"</span>: <span class="string">"Mi producto"</span>,
+    <span class="string">"price"</span>: 2233,
+}
+
+<span class="comment"># Opción 1: data (form-encoded)</span>
+resp = requests.post(url, data=data)
+
+<span class="comment"># Opción 2: json (Content-Type: application/json)</span>
+resp = requests.post(url, json=data)
+
+print(resp.status_code)  <span class="comment"># 201 Created</span>
+print(resp.json())       <span class="comment"># recurso creado</span></code></pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECCIÓN: AUTENTICACIÓN -->
+    <h2 class="section-title">🔐 Autenticación</h2>
+
+    <div class="card" onclick="this.classList.toggle('flipped')">
+        <div class="card-inner">
+            <div class="card-front">
+                <span class="card-tag">Auth</span>
+                <h3>Autenticación con Headers</h3>
+                <p>Los headers permiten enviar credenciales (tokens) para verificar tu identidad ante la API.</p>
+            </div>
+            <div class="card-back">
+                <span class="card-tag">Código</span>
+                <pre><code><span class="comment"># Obtener token</span>
+body = {<span class="string">"username"</span>: <span class="string">"user"</span>, <span class="string">"password"</span>: <span class="string">"pass"</span>}
+resp = requests.post(login_url, data=body)
+token = resp.json()[<span class="string">"accessToken"</span>]
+
+<span class="comment"># Usar token en headers</span>
+headers = {
+    <span class="string">"Authorization"</span>: f<span class="string">"Bearer {token}"</span>
+}
+resp = requests.get(url, headers=headers)</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <div class="card" onclick="this.classList.toggle('flipped')">
+        <div class="card-inner">
+            <div class="card-front">
+                <span class="card-tag">Auth</span>
+                <h3>API Key como parámetro</h3>
+                <p>Algunas APIs usan una clave directamente en los parámetros de la URL en lugar de en headers.</p>
+            </div>
+            <div class="card-back">
+                <span class="card-tag">Código</span>
+                <pre><code><span class="comment"># API Key en params (ej: OMDb, Coordinador)</span>
+parametros = {
+    <span class="string">"apikey"</span>: <span class="string">"tu_api_key"</span>,
+    <span class="string">"t"</span>: <span class="string">"Inception"</span>
+}
+resp = requests.get(BASE, params=parametros)
+
+<span class="comment"># Otra variante</span>
+parametros = {
+    <span class="string">"user_key"</span>: API_KEY,
+    <span class="string">"date"</span>: <span class="string">"2025-06-15"</span>
+}
+resp = requests.get(url, params=parametros)</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECCIÓN: MANEJO DE RESPUESTAS -->
+    <h2 class="section-title">📦 Manejo de Respuestas</h2>
+
+    <div class="card" onclick="this.classList.toggle('flipped')">
+        <div class="card-inner">
+            <div class="card-front">
+                <span class="card-tag">Response</span>
+                <h3>Atributos del objeto Response</h3>
+                <p>El objeto Response contiene toda la información de la respuesta HTTP.</p>
+            </div>
+            <div class="card-back">
+                <span class="card-tag">Referencia</span>
+                <pre><code>resp.status_code   <span class="comment"># int: 200, 404...</span>
+resp.reason        <span class="comment"># str: "OK", "Not Found"</span>
+resp.json()        <span class="comment"># dict/list (si es JSON)</span>
+resp.text          <span class="comment"># str: body como texto</span>
+resp.content       <span class="comment"># bytes: body crudo</span>
+resp.headers       <span class="comment"># dict: headers respuesta</span>
+resp.url           <span class="comment"># str: URL final usada</span>
+resp.encoding      <span class="comment"># str: encoding detectado</span></code></pre>
+            </div>
+        </div>
+    </div>
+
+    <div class="card" onclick="this.classList.toggle('flipped')">
+        <div class="card-inner">
+            <div class="card-front">
+                <span class="card-tag">Response</span>
+                <h3>Contenido no-JSON (imágenes, etc.)</h3>
+                <p>No todas las APIs devuelven JSON. Verifica el Content-Type antes de parsear.</p>
+            </div>
+            <div class="card-back">
+                <span class="card-tag">Código</span>
+                <pre><code><span class="keyword">from</span> json <span class="keyword">import</span> JSONDecodeError
+
+<span class="keyword">try</span>:
+    data = resp.json()
+<span class="keyword">except</span> JSONDecodeError:
+    content_type = resp.headers[<span class="string">"Content-Type"</span>]
+    print(f<span class="string">"No es JSON: {content_type}"</span>)
+    <span class="comment"># Para imágenes, guardar bytes:</span>
+    <span class="keyword">with</span> open(<span class="string">"img.png"</span>, <span class="string">"wb"</span>) <span class="keyword">as</span> f:
+        f.write(resp.content)</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECCIÓN: PATRONES COMUNES -->
+    <h2 class="section-title">🔄 Patrones Comunes</h2>
+
+    <div class="card" onclick="this.classList.toggle('flipped')">
+        <div class="card-inner">
+            <div class="card-front">
+                <span class="card-tag">Patrón</span>
+                <h3>Búsqueda → Detalle</h3>
+                <p>Patrón típico: primero buscar (lista), luego consultar detalle de cada resultado.</p>
+            </div>
+            <div class="card-back">
+                <span class="card-tag">Código</span>
+                <pre><code><span class="comment"># 1. Buscar (retorna lista resumida)</span>
+params = {<span class="string">"apikey"</span>: KEY, <span class="string">"s"</span>: <span class="string">"Matrix"</span>}
+results = requests.get(BASE, params=params).json()
+
+<span class="comment"># 2. Detalle de cada resultado</span>
+<span class="keyword">for</span> item <span class="keyword">in</span> results[<span class="string">"Search"</span>]:
+    detail_params = {
+        <span class="string">"apikey"</span>: KEY,
+        <span class="string">"i"</span>: item[<span class="string">"imdbID"</span>]
+    }
+    detail = requests.get(
+        BASE, params=detail_params
+    ).json()
+    print(detail[<span class="string">"Plot"</span>])</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <div class="card" onclick="this.classList.toggle('flipped')">
+        <div class="card-inner">
+            <div class="card-front">
+                <span class="card-tag">Patrón</span>
+                <h3>Iteración por fechas → CSV</h3>
+                <p>Consultar una API día a día y acumular resultados para exportar a CSV.</p>
+            </div>
+            <div class="card-back">
+                <span class="card-tag">Código</span>
+                <pre><code><span class="keyword">import</span> csv
+
+all_records = []
+<span class="keyword">for</span> day <span class="keyword">in</span> range(1, 31):
+    date_str = f<span class="string">"2025-06-{day:02d}"</span>
+    params = {<span class="string">"user_key"</span>: KEY, <span class="string">"date"</span>: date_str}
+    resp = requests.get(url, params=params)
+    <span class="keyword">if</span> resp.status_code == 200:
+        all_records.extend(resp.json()[<span class="string">"content"</span>])
+
+<span class="keyword">with</span> open(<span class="string">"out.csv"</span>, <span class="string">"w"</span>, newline=<span class="string">""</span>) <span class="keyword">as</span> f:
+    writer = csv.DictWriter(f, fieldnames=[...])
+    writer.writeheader()
+    writer.writerows(all_records)</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <div class="card" onclick="this.classList.toggle('flipped')">
+        <div class="card-inner">
+            <div class="card-front">
+                <span class="card-tag">Patrón</span>
+                <h3>Manejo de errores robusto</h3>
+                <p>Siempre verifica el status code antes de procesar la respuesta.</p>
+            </div>
+            <div class="card-back">
+                <span class="card-tag">Código</span>
+                <pre><code>resp = requests.get(url, params=params)
+
+<span class="keyword">if</span> resp.status_code == 200:
+    data = resp.json()
+    <span class="comment"># Procesar data...</span>
+<span class="keyword">elif</span> resp.status_code == 401:
+    print(<span class="string">"No autorizado. Revisa tu API key."</span>)
+<span class="keyword">elif</span> resp.status_code == 404:
+    print(<span class="string">"Recurso no encontrado."</span>)
+<span class="keyword">else</span>:
+    print(f<span class="string">"Error {resp.status_code}: {resp.reason}"</span>)
+    print(resp.text[:200])</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECCIÓN: RESUMEN RÁPIDO -->
+    <h2 class="section-title">⚡ Quick Reference</h2>
+
+    <div class="card" onclick="this.classList.toggle('flipped')">
+        <div class="card-inner">
+            <div class="card-front">
+                <span class="card-tag">Resumen</span>
+                <h3>Anatomía de una request</h3>
+                <p>Los 4 componentes principales que puedes configurar en cada petición.</p>
+            </div>
+            <div class="card-back">
+                <span class="card-tag">Estructura</span>
+                <pre><code>requests.&lt;método&gt;(
+    url,              <span class="comment"># BASE + endpoint</span>
+    params={...},     <span class="comment"># query string (?key=val)</span>
+    data={...},       <span class="comment"># body (form-encoded)</span>
+    json={...},       <span class="comment"># body (JSON)</span>
+    headers={...},    <span class="comment"># auth, content-type</span>
+)</code></pre>
+                <p><strong>params</strong> → se añaden a la URL<br>
+                   <strong>data/json</strong> → van en el body<br>
+                   <strong>headers</strong> → metadatos de la petición</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="card" onclick="this.classList.toggle('flipped')">
+        <div class="card-inner">
+            <div class="card-front">
+                <span class="card-tag">Tip</span>
+                <h3>Diferencia entre data y json</h3>
+                <p>¿Cuándo usar data= vs json= en POST?</p>
+            </div>
+            <div class="card-back">
+                <span class="card-tag">Comparación</span>
+                <pre><code><span class="comment"># data= → Content-Type: form-urlencoded</span>
+<span class="comment"># Útil para formularios y APIs simples</span>
+requests.post(url, data={<span class="string">"key"</span>: <span class="string">"val"</span>})
+
+<span class="comment"># json= → Content-Type: application/json</span>
+<span class="comment"># Útil para APIs modernas (REST)</span>
+requests.post(url, json={<span class="string">"key"</span>: <span class="string">"val"</span>})</code></pre>
+                <p>⚠️ Con <code>data=</code> si la API espera JSON, debes hacer <code>json.dumps(body)</code> manualmente.</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<p class="flip-hint" style="margin-top: 2rem;">💡 Haz click en cualquier tarjeta para ver el código / detalle</p>
+
+<script>
+    // Allow keyboard navigation
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            document.querySelectorAll('.card.flipped').forEach(c => c.classList.remove('flipped'));
+        }
+    });
+
+    // Scroll content inside each card face when mouse wheel is over it.
+    document.querySelectorAll('.card-front, .card-back').forEach((face) => {
+        face.addEventListener('wheel', (event) => {
+            const maxScroll = face.scrollHeight - face.clientHeight;
+            if (maxScroll <= 0) {
+                return;
+            }
+
+            face.scrollTop += event.deltaY;
+            event.preventDefault();
+        }, { passive: false });
+    });
+</script>
+
+</body>
+</html>

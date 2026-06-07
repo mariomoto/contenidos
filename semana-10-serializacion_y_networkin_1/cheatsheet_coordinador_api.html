@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cheat Sheet – API Coordinador Eléctrico Nacional (Chile)</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: #0a1628;
+            color: #e0e0e0;
+            padding: 2rem;
+            line-height: 1.6;
+        }
+        h1 {
+            text-align: center;
+            color: #4fc3f7;
+            margin-bottom: 0.3rem;
+            font-size: 1.9rem;
+        }
+        .subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+        .portal-link {
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 0.8rem;
+        }
+        .portal-link a { color: #4fc3f7; text-decoration: none; }
+        .portal-link a:hover { text-decoration: underline; }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+            gap: 1.5rem;
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+        .card {
+            background: #112240;
+            border-radius: 12px;
+            border: 1px solid #1e3a5f;
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+            perspective: 1000px;
+        }
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(79, 195, 247, 0.12);
+        }
+        .card-inner {
+            position: relative;
+            min-height: 240px;
+            transition: transform 0.5s;
+            transform-style: preserve-3d;
+        }
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            min-height: 240px;
+            backface-visibility: hidden;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .card-back {
+            transform: rotateY(180deg);
+            background: #0d1b2a;
+            border-radius: 12px;
+        }
+        .card-tag {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 0.8rem;
+            align-self: flex-start;
+        }
+        .tag-general { background: #4fc3f7; color: #0a1628; }
+        .tag-auth { background: #ffb74d; color: #1a1a2e; }
+        .tag-endpoint { background: #81c784; color: #1a1a2e; }
+        .tag-code { background: #ce93d8; color: #1a1a2e; }
+        .tag-tip { background: #ef5350; color: #fff; }
+        .tag-service { background: #aed581; color: #1a1a2e; }
+        .card-front h3 {
+            color: #fff;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+        .card-front p {
+            color: #aaa;
+            font-size: 0.85rem;
+        }
+        .card-back pre {
+            background: #0a0e1a;
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 0.76rem;
+            line-height: 1.5;
+            color: #c9d1d9;
+        }
+        .card-back code { font-family: 'JetBrains Mono', 'Fira Code', monospace; }
+        .card-back p {
+            font-size: 0.83rem;
+            color: #ccc;
+            margin-top: 0.5rem;
+        }
+        .card-back ul {
+            font-size: 0.83rem;
+            color: #ccc;
+            padding-left: 1.2rem;
+            margin-top: 0.3rem;
+        }
+        .card-back li { margin-bottom: 0.3rem; }
+        .flip-hint {
+            text-align: center;
+            color: #555;
+            font-size: 0.75rem;
+            margin-top: 0.5rem;
+        }
+        .keyword { color: #ff79c6; }
+        .string { color: #a5d6ff; }
+        .comment { color: #6a737d; }
+        .func { color: #d2a8ff; }
+        .section-title {
+            grid-column: 1 / -1;
+            color: #4fc3f7;
+            font-size: 1.3rem;
+            border-bottom: 1px solid #1e3a5f;
+            padding-bottom: 0.5rem;
+            margin-top: 1rem;
+        }
+        .method-badge {
+            display: inline-block;
+            background: #81c784;
+            color: #0a1628;
+            padding: 1px 6px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            font-family: monospace;
+            margin-right: 5px;
+        }
+        .method-post { background: #ffb74d; }
+        @media (max-width: 600px) {
+            body { padding: 1rem; }
+            .grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<h1>⚡ API Coordinador Eléctrico Nacional</h1>
+<p class="subtitle">Cheat Sheet &amp; Flash Cards · Sistema Eléctrico de Chile</p>
+<p class="portal-link">
+    <a href="https://portal.api.coordinador.cl/" target="_blank">🌐 Portal API</a> · 
+    <a href="https://portal.api.coordinador.cl/lista" target="_blank">📋 Lista de APIs</a> · 
+    <a href="https://portal.api.coordinador.cl/documentacion?service=operaciones" target="_blank">📖 Docs Operaciones</a>
+</p>
+
+<div class="grid">
+
+    <!-- SECCIÓN: GENERAL -->
+    <h2 class="section-title">🏗️ Información General</h2>
+
+    <div class="card" onclick="this.classList.toggle('flipped')">
+        <div class="card-inner">
+            <div class="card-front">
+                <span class="card-tag tag-general">General</span>
+                <h3>¿Qué es esta API?</h3>
+                <p>API pública del Coordinador Eléctrico Nacional de Chile. Proporciona datos en tiempo real y históricos del sistema eléctrico (generación, demanda, costos, topología).</p>
+            </div>
+            <div class="card-back">
+                <span class="card-tag tag-general">Detalle</span>
+                <p><strong>Servicios disponibles:</strong></p>
+                <ul>
+                    <li><strong>Operaciones</strong> — generación, desviación, CNE, potencia neta, tramos, nodos</li>
+                    <li><strong>Información Pública (SIP)</strong> — datos del sistema interconectado</li>
+                    <li><strong>Mercados</strong> — pronósticos de demanda, ERV, centrales de pasada</li>
+                    <li><strong>Medidas (PRTME)</strong> — mediciones del sistema</li>
+                    <li><strong>Planificación</strong> — programación de operación</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="card" onclick="this.classList.toggle('flipped')">
+        <div class="card-inner">
+            <div class="card-front">
+                <span class="card-tag tag-general">General</span>
+                <h3>URL Base y estructura</h3>
+                <p>Todas las requests al servicio de Operaciones usan la misma URL base y se diferencian por endpoint.</p>
+            </div>
+            <div class="card-back">
+                <span class="card-tag tag-code">Estructura</span>
+                <pre><code><span class="comment"># URL Base (Operaciones)</span>
+BASE = <span class="string">"https://operacion.api.coordinador.cl"</span>
+
+<span class="comment"># Estructura general:</span>
+<span class="comment"># BASE + /servicio/version/recurso</span>
+
+<span class="comment"># Ejemplos:</span>
+<span class="string">"/reportes/v3/generation"</span>
+<span class="string">"/reportes/v3/deviation"</span>
+<span class="string">"/reportes/v3/cne"</span>
+<span class="string">"/net-power/v1/"</span>
+<span class="string">"/tramos/v1"</span>
+<span class="string">"/proyectos/v1"</span></code></pre>
+            </div>
+        </div>
+    </div>
+
+    <div class="card" onclick="this.classList.toggle('flipped')">
+        <div class="card-inner">
+            <div class="card-front">
+                <span class="card-tag tag-general">General</span>
+                <h3>Registro y obtención de API Key</h3>
+                <p>Para usar la API necesitas registrarte en el portal y obtener una clave de usuario (user_key).</p>
+            </div>
+            <div class="card-back">
+                <span class="card-tag tag-general">Pasos</span>
+                <p><strong>Cómo obtener acceso:</strong></p>
+                <ul>
+                    <li>1. Ir a <code>portal.api.coordinador.cl</code></li>
+                    <li>2. Registrarse (crear cuenta)</li>
+                    <li>3. Suscribirse a un plan (hay planes gratuitos)</li>
+                    <li>4. Obtener tu <code>user_key</code> desde tu perfil</li>
+                </ul>
+                <p style="margin-top:0.8rem; color:#ffb74d;">⚠️ La key se pasa como <strong>parámetro de consulta</strong>, NO en headers.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECCIÓN: AUTENTICACIÓN -->
+    <h2 class="section-title">🔐 Autenticación</h2>
+
+    <div class="card" onclick="this.classList.toggle('flipped')">
+        <div class="card-inner">
+            <div class="card-front">
+                <span class="card-tag tag-auth">Auth</span>
+                <h3>Método de autenticación: user_key</h3>
+                <p>A diferencia de muchas APIs, aquí la clave va como query parameter, NO en headers tipo Bearer.</p>
+            </div>
+            <div class="card-back">
+                <span class="card-tag tag-code">Código</span>
+                <pre><code>API_KEY = <span class="string">"tu_api_key_aqui"</span>
+
+<span class="comment"># ✅ CORRECTO: user_key como parámetro</span>
+parametros = {
+    <span class="string">"user_key"</span>: API_KEY,
+    <span class="string">"date"</span>: <span class="string">"2025-06-15"</span>
+}
+resp = requests.get(BASE + endpoint, params=parametros)
+
+<span class="comment"># ❌ INCORRECTO: NO usar headers</span>
+<span class="comment"># headers = {"Authorization": f"Bearer {API_KEY}"}</span>
+<span class="comment"># headers = {"Ocp-Apim-Subscription-Key": API_KEY}</span></code></pre>
+            </div>
+        </div>
+    </div>
+
+    <div class="card" onclick="this.classList.toggle('flipped')">
+        <div class="card-inner">
+            <div class="card-front">
+                <span class="card-tag tag-tip">Gotcha</span>
+                <h3>Errores comunes de autenticación</h3>
+                <p>Si recibes 401 o 403, probablemente estás pasando la key de forma incorrecta.</p>
+            </div>
+            <div class="card-back">
+                <span class="card-tag tag-tip">Errores</span>
+                <p><strong>Problemas frecuentes:</strong></p>
+                <ul>
+                    <li><strong>401 Unauthorized</strong> → API key inválida o expirada</li>
+                    <li><strong>403 Forbidden</strong> → No tienes suscripción al plan</li>
+                    <li><strong>"Exceeded maximum number of pages"</strong> → No usar <code>page</code>/<code>pageSize</code> manualmente</li>
+                    <li><strong>Key en header</strong> → Mover a <code>params</code></li>
+                </ul>
+                <pre><code><span class="comment"># Verificar error:</span>
+<span class="keyword">if</span> resp.status_code != 200:
+    print(resp.status_code, resp.text[:300])</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECCIÓN: ENDPOINTS DE REPORTES -->
+    <h2 class="section-title">📊 Endpoints de Reportes (los más usados)</h2>
+
+    <div class="card" onclick="this.classList.toggle('flipped')">
+        <div class="card-inner">
+            <div class="card-front">
+                <span class="card-tag tag-endpoint">Endpoint</span>
+                <h3><span class="method-badge">GET</span> /reportes/v3/generation</h3>
+                <p>Clasificación de generación por fuente energética (hidráulica, térmica, eólica, solar, BESS, geotérmica).</p>
+            </div>
+            <div class="card-back">
+                <span class="card-tag tag-code">Código</span>
+                <pre><code><span class="keyword">import</span> requests
+
+BASE = <span class="string">"https://operacion.api.coordinador.cl"</span>
+endpoint = <span class="string">"/reportes/v3/generation"</span>
+
+params = {
+    <span class="string">"user_key"</span>: API_KEY,
+    <span class="string">"date"</span>: <span class="string">"2025-06-15"</span>  <span class="comment"># YYYY-MM-DD</span>
+}
+resp = requests.get(BASE + endpoint, params=params)
+data = resp.json()
+
+<span class="comment"># Respuesta: 6 categorías por día</span>
+<span class="keyword">for</span> item <span class="keyword">in</span> data[<span class="string">"content"</span>]:
+    print(item[<span class="string">"description"</span>], item[<span class="string">"dailyCurrent"</span>])</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <div class="card" onclick="this.classList.toggle('flipped')">
+        <div class="card-inner">
+            <div class="card-front">
+                <span class="card-tag tag-endpoint">Endpoint</span>
+                <h3><span class="method-badge">GET</span> /reportes/v3/deviation</h3>
+                <p>Reporte de desviación desde el sistema OpReal. Muestra diferencias entre generación programada y real.</p>
+            </div>
+            <div class="card-back">
+                <span class="card-tag tag-code">Código</span>
+                <pre><code>endpoint = <span class="string">"/reportes/v3/deviation"</span>
+
+params = {
+    <span class="string">"user_key"</span>: API_KEY,
+    <span class="string">"date"</span>: <span class="string">"2025-06-15"</span>
+}
+resp = requests.get(BASE + endpoint, params=params)
+data = resp.json()
+
+print(f<span class="string">"Total: {data['totalElements']} registros"</span>)
+<span class="keyword">for</span> item <span class="keyword">in</span> data[<span class="string">"content"</span>]:
+    print(item)</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <div class="card" onclick="this.classList.toggle('flipped')">
+        <div class="card-inner">
+            <div class="card-front">
+                <span class="card-tag tag-endpoint">Endpoint</span>
+                <h3><span class="method-badge">GET</span> /reportes/v3/cne</h3>
+                <p>Reporte CNE (Comisión Nacional de Energía) desde el sistema OpReal.</p>
+            </div>
+            <div class="card-back">
+                <span class="card-tag tag-code">Código</span>
+                <pre><code>endpoint = <span class="string">"/reportes/v3/cne"</span>
+
+params = {
+    <span class="string">"user_key"</span>: API_KEY,
+    <span class="string">"date"</span>: <span class="string">"2025-06-15"</span>
+}
+resp = requests.get(BASE + endpoint, params=params)
+data = resp.json()
+
+<span class="comment"># Estructura similar a generation</span>
+print(data.keys())
+print(data[<span class="string">"content"</span>])</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECCIÓN: OTROS ENDPOINTS -->
+    <h2 class="section-title">🔌 Otros Endpoints de Operaciones</h2>
+
+    <div class="card" onclick="this.classList.toggle('flipped')">
+        <div class="card-inner">
+            <div class="card-front">
+                <span class="card-tag tag-endpoint">Endpoint</span>
+                <h3><span class="method-badge">GET</span> /net-power/v1/</h3>
+                <p>Obtener la potencia neta del sistema eléctrico.</p>
+            </div>
+            <div class="card-back">
+                <span class="card-tag tag-code">Código</span>
+                <pre><code>endpoint = <span class="string">"/net-power/v1/"</span>
+
+params = {<span class="string">"user_key"</span>: API_KEY}
+resp = requests.get(BASE + endpoint, params=params)
+
+<span class="keyword">if</span> resp.status_code == 200:
+    data = resp.json()
+    print(data)</code></pre>
+                <p>Retorna información sobre la potencia neta instalada y disponible.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="card" onclick="this.classList.toggle('flipped')">
+        <div class="card-inner">
+            <div class="card-front">
+                <span class="card-tag tag-endpoint">Endpoint</span>
+                <h3><span class="method-badge">GET</span> /tramos/v1</h3>
+                <p>Buscar tramos (líneas de transmisión) con filtros de búsqueda y ordenamiento.</p>
+            </div>
+            <div class="card-back">
+                <span class="card-tag tag-code">Código</span>
+                <pre><code>endpoint = <span class="string">"/tramos/v1"</span>
+
+params = {<span class="string">"user_key"</span>: API_KEY}
+resp = requests.get(BASE + endpoint, params=params)
+data = resp.json()
+
+<span class="comment"># También disponible:</span>
+<span class="comment"># /tramos/v1/{id}        → un tramo específico</span>
+<span class="comment"># /tramos/v1/tipos       → tipos de tramos</span>
+<span class="comment"># /tramos/v1/tipos/{id}  → un tipo específico</span></code></pre>
+            </div>
+        </div>
+    </div>
+
+    <div class="card" onclick="this.classList.toggle('flipped')">
+        <div class="card-inner">
+            <div class="card-front">
+                <span class="card-tag tag-endpoint">Endpoint</span>
+                <h3><span class="method-badge">GET</span> /proyectos/v1</h3>
+                <p>Lista de proyectos energéticos, incluyendo información de completitud y calidad.</p>
+            </div>
+            <div class="card-back">
+                <span class="card-tag tag-code">Código</span>
+                <pre><code>endpoint = <span class="string">"/proyectos/v1"</span>
+
+params = {<span class="string">"user_key"</span>: API_KEY}
+resp = requests.get(BASE + endpoint, params=params)
+data = resp.json()
+
+<span class="comment"># Sub-endpoints disponibles:</span>
+<span class="comment"># /proyectos/v1/{id}</span>
+<span class="comment"># /proyectos/v1/completitud-calidad</span>
+<span class="comment"># /proyectos/v1/completitud-calidad/empresas</span>
+<span class="comment"># /proyectos/v1/completitud-calidad/instalaciones</span></code></pre>
+            </div>
+        </div>
+    </div>
+
+    <div class="card" onclick="this.classList.toggle('flipped')">
+        <div class="card-inner">
+            <div class="card-front">
+                <span class="card-tag tag-endpoint">Endpoint</span>
+                <h3><span class="method-badge">GET</span> /unidades-generadoras/v1</h3>
+                <p>Buscar unidades generadoras del sistema con filtros de búsqueda y ordenamiento.</p>
+            </div>
+            <div class="card-back">
+                <span class="card-tag tag-code">Código</span>
+                <pre><code>endpoint = <span class="string">"/unidades-generadoras/v1"</span>
+
+params = {<span class="string">"user_key"</span>: API_KEY}
+resp = requests.get(BASE + endpoint, params=params)
+data = resp.json()
+
+<span class="comment"># Para una unidad específica:</span>
+<span class="comment"># /unidades-generadoras/v1/{id}</span>
+
+<span class="keyword">for</span> ug <span class="keyword">in</span> data[<span class="string">"content"</span>]:
+    print(ug)</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <div class="card" onclick="this.classList.toggle('flipped')">
+        <div class="card-inner">
+            <div class="card-front">
+                <span class="card-tag tag-endpoint">Endpoint</span>
+                <h3><span class="method-badge">GET</span> /servicios-complementarios/v1</h3>
+                <p>Servicios complementarios del sistema (frecuencia, voltaje, etc.) dado un rango de fechas.</p>
+            </div>
+            <div class="card-back">
+                <span class="card-tag tag-code">Código</span>
+                <pre><code>endpoint = <span class="string">"/servicios-complementarios/v1"</span>
+
+params = {<span class="string">"user_key"</span>: API_KEY}
+resp = requests.get(BASE + endpoint, params=params)
+
+<span class="comment"># Sub-endpoints:</span>
+<span class="comment"># /unidades-generadoras-sscc</span>
+<span class="comment"># /tramos-sscc</span>
+<span class="comment"># /subestacion-sscc</span>
+<span class="comment"># /reactores-sscc</span>
+<span class="comment"># /panos-sscc</span>
+<span class="comment"># /interruptores-sscc</span></code></pre>
+            </div>
+        </div>
+    </div>
+
+    <div class="card" onclick="this.classList.toggle('flipped')">
+        <div class="card-inner">
+            <div class="card-front">
+                <span class="card-tag tag-endpoint">Endpoint</span>
+                <h3><span class="method-badge">GET</span> /reduccion/v1/generacion</h3>
+                <p>Datos de reducción de generación y consumo desde el sistema Neomante.</p>
+            </div>
+            <div class="card-back">
+                <span class="card-tag tag-code">Código</span>
+                <pre><code><span class="comment"># Reducción de generación</span>
+endpoint = <span class="string">"/reduccion/v1/generacion"</span>
+params = {<span class="string">"user_key"</span>: API_KEY}
+resp = requests.get(BASE + endpoint, params=params)
+
+<span class="comment"># Reducción de consumo</span>
+endpoint = <span class="string">"/reduccion/v1/consumo"</span>
+params = {<span class="string">"user_key"</span>: API_KEY}
+resp = requests.get(BASE + endpoint, params=params)</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECCIÓN: TOPOLOGÍA -->
+    <h2 class="section-title">🗺️ Topología del Sistema</h2>
+
+    <div class="card" onclick="this.classList.toggle('flipped')">
+        <div class="card-inner">
+            <div class="card-front">
+                <span class="card-tag tag-endpoint">Endpoint</span>
+                <h3><span class="method-badge">GET</span> /topologia/v3/...</h3>
+                <p>Endpoints de topología para consultar nodos, propietarios, plantas y generación por ID de infotécnica.</p>
+            </div>
+            <div class="card-back">
+                <span class="card-tag tag-code">Endpoints</span>
+                <pre><code><span class="comment"># Todos requieren {infotecnica_id}</span>
+
+<span class="comment"># Informe de nodos</span>
+<span class="string">"/topologia/v3/reportgroup/{id}"</span>
+
+<span class="comment"># Nodos del propietario</span>
+<span class="string">"/topologia/v3/plantowner/{id}"</span>
+
+<span class="comment"># Plantas de empresas</span>
+<span class="string">"/topologia/v3/plantcompany/{id}"</span>
+
+<span class="comment"># Claves de combustible</span>
+<span class="string">"/topologia/v3/fuelcons/{id}"</span>
+
+<span class="comment"># Generación de energía por ID</span>
+<span class="string">"/topologia/v3/energygen/{id}"</span>
+
+<span class="comment"># Claves de programación</span>
+<span class="string">"/topologia/v3/progsen/{id}"</span></code></pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECCIÓN: RESPUESTA -->
+    <h2 class="section-title">📦 Estructura de Respuesta</h2>
+
+    <div class="card" onclick="this.classList.toggle('flipped')">
+        <div class="card-inner">
+            <div class="card-front">
+                <span class="card-tag tag-general">Response</span>
+                <h3>Formato de respuesta paginada</h3>
+                <p>Las respuestas siguen un formato estándar con paginación y metadatos.</p>
+            </div>
+            <div class="card-back">
+                <span class="card-tag tag-code">Estructura JSON</span>
+                <pre><code>{
+  <span class="string">"page"</span>: 0,
+  <span class="string">"pageSize"</span>: 20,
+  <span class="string">"totalElements"</span>: 6,
+  <span class="string">"totalPages"</span>: 1,
+  <span class="string">"content"</span>: [
+    {
+      <span class="string">"description"</span>: <span class="string">"Hidráulica"</span>,
+      <span class="string">"dailyCurrent"</span>: 115.053,
+      <span class="string">"monthlyCurrentTodate"</span>: 1785.6,
+      <span class="string">"annualCurrentTodate"</span>: 19141.0,
+      <span class="string">"date"</span>: <span class="string">"2025-06-15"</span>
+    }, ...
+  ]
+}</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <div class="card" onclick="this.classList.toggle('flipped')">
+        <div class="card-inner">
+            <div class="card-front">
+                <span class="card-tag tag-general">Response</span>
+                <h3>Campos de /generation</h3>
+                <p>Cada registro del endpoint generation contiene datos diarios, mensuales y anuales en GWh.</p>
+            </div>
+            <div class="card-back">
+                <span class="card-tag tag-general">Campos</span>
+                <p><strong>Campos por registro:</strong></p>
+                <ul>
+                    <li><code>description</code> → Tipo de fuente (Hidráulica, Térmica, Eólica, Solar, BESS, Geotérmica)</li>
+                    <li><code>dailyCurrent</code> → Generación del día [GWh]</li>
+                    <li><code>monthlyCurrentTodate</code> → Acumulado del mes [GWh]</li>
+                    <li><code>annualCurrentTodate</code> → Acumulado del año [GWh]</li>
+                    <li><code>date</code> → Fecha consultada (YYYY-MM-DD)</li>
+                </ul>
+                <p style="color:#81c784; margin-top:0.5rem;">6 registros por día (uno por fuente energética)</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECCIÓN: SERVICIOS DISPONIBLES -->
+    <h2 class="section-title">🌐 Servicios del Portal</h2>
+
+    <div class="card" onclick="this.classList.toggle('flipped')">
+        <div class="card-inner">
+            <div class="card-front">
+                <span class="card-tag tag-service">Servicio</span>
+                <h3>Operaciones (el más usado)</h3>
+                <p>Datos operacionales del sistema eléctrico: generación, topología, tramos, proyectos, nodos.</p>
+            </div>
+            <div class="card-back">
+                <span class="card-tag tag-service">Info</span>
+                <p><strong>Base URL:</strong> <code>https://operacion.api.coordinador.cl</code></p>
+                <p><strong>Categorías de endpoints:</strong></p>
+                <ul>
+                    <li>📊 Reportes (generation, deviation, cne)</li>
+                    <li>🗺️ Topología (nodos, plantas, combustibles)</li>
+                    <li>⚡ Potencia neta</li>
+                    <li>🔌 Tramos (líneas de transmisión)</li>
+                    <li>🏗️ Proyectos</li>
+                    <li>🔄 Giros y conexiones</li>
+                    <li>⚙️ Unidades generadoras</li>
+                    <li>🛡️ Servicios complementarios</li>
+                    <li>📉 Reducción</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="card" onclick="this.classList.toggle('flipped')">
+        <div class="card-inner">
+            <div class="card-front">
+                <span class="card-tag tag-service">Servicio</span>
+                <h3>Mercados</h3>
+                <p>APIs para recepción de pronósticos: demanda, centrales de pasada, ERV (energías renovables variables).</p>
+            </div>
+            <div class="card-back">
+                <span class="card-tag tag-service">Info</span>
+                <p><strong>Endpoints (todos POST):</strong></p>
+                <ul>
+                    <li><span class="method-badge method-post">POST</span> Pronósticos centrales de pasada</li>
+                    <li><span class="method-badge method-post">POST</span> Pronósticos de demanda</li>
+                    <li><span class="method-badge method-post">POST</span> Pronósticos ERV</li>
+                </ul>
+                <p style="margin-top:0.8rem; color:#ffb74d;">⚠️ Estos endpoints son para <strong>enviar</strong> pronósticos al coordinador, no para consultar datos.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="card" onclick="this.classList.toggle('flipped')">
+        <div class="card-inner">
+            <div class="card-front">
+                <span class="card-tag tag-service">Servicio</span>
+                <h3>Información Pública (SIP) / Medidas / Planificación</h3>
+                <p>Otros servicios disponibles en el portal con datos complementarios del sistema eléctrico.</p>
+            </div>
+            <div class="card-back">
+                <span class="card-tag tag-service">Info</span>
+                <p><strong>SIP:</strong> Sistema de Información Pública — datos históricos y estadísticas del sistema.</p>
+                <p><strong>Medidas (PRTME):</strong> Datos de medición de equipos del sistema eléctrico.</p>
+                <p><strong>Planificación:</strong> Programación de la operación del sistema.</p>
+                <p style="margin-top:0.8rem; color:#888;">Documentación en:<br><code>portal.api.coordinador.cl/documentacion?service=sipubv2</code><br><code>...?service=medidas</code><br><code>...?service=planificacion</code></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECCIÓN: PATRONES -->
+    <h2 class="section-title">🔄 Patrones de Uso</h2>
+
+    <div class="card" onclick="this.classList.toggle('flipped')">
+        <div class="card-inner">
+            <div class="card-front">
+                <span class="card-tag tag-code">Patrón</span>
+                <h3>Consulta básica completa</h3>
+                <p>Template mínimo para consultar cualquier endpoint de la API de Operaciones.</p>
+            </div>
+            <div class="card-back">
+                <span class="card-tag tag-code">Template</span>
+                <pre><code><span class="keyword">import</span> requests
+
+BASE = <span class="string">"https://operacion.api.coordinador.cl"</span>
+API_KEY = <span class="string">"tu_key"</span>
+
+endpoint = <span class="string">"/reportes/v3/generation"</span>
+params = {
+    <span class="string">"user_key"</span>: API_KEY,
+    <span class="string">"date"</span>: <span class="string">"2025-06-15"</span>
+}
+
+resp = requests.get(BASE + endpoint, params=params)
+
+<span class="keyword">if</span> resp.status_code == 200:
+    data = resp.json()
+    <span class="keyword">for</span> item <span class="keyword">in</span> data[<span class="string">"content"</span>]:
+        print(item)
+<span class="keyword">else</span>:
+    print(f<span class="string">"Error: {resp.status_code}"</span>)</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <div class="card" onclick="this.classList.toggle('flipped')">
+        <div class="card-inner">
+            <div class="card-front">
+                <span class="card-tag tag-code">Patrón</span>
+                <h3>Iterar por rango de fechas → CSV</h3>
+                <p>Consultar múltiples días y exportar todos los resultados a un archivo CSV.</p>
+            </div>
+            <div class="card-back">
+                <span class="card-tag tag-code">Código</span>
+                <pre><code><span class="keyword">import</span> requests, csv
+
+all_records = []
+<span class="keyword">for</span> day <span class="keyword">in</span> range(1, 31):
+    date_str = f<span class="string">"2025-06-{day:02d}"</span>
+    params = {<span class="string">"user_key"</span>: API_KEY, <span class="string">"date"</span>: date_str}
+    resp = requests.get(BASE + endpoint, params=params)
+    <span class="keyword">if</span> resp.status_code == 200:
+        all_records.extend(resp.json()[<span class="string">"content"</span>])
+    <span class="keyword">else</span>:
+        print(f<span class="string">"Error {date_str}: {resp.status_code}"</span>)
+
+<span class="keyword">with</span> open(<span class="string">"output.csv"</span>, <span class="string">"w"</span>, newline=<span class="string">""</span>) <span class="keyword">as</span> f:
+    w = csv.DictWriter(f, fieldnames=[<span class="string">"date"</span>,
+        <span class="string">"description"</span>, <span class="string">"dailyCurrent"</span>])
+    w.writeheader()
+    w.writerows(all_records)</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <div class="card" onclick="this.classList.toggle('flipped')">
+        <div class="card-inner">
+            <div class="card-front">
+                <span class="card-tag tag-code">Patrón</span>
+                <h3>Consulta con ID de recurso</h3>
+                <p>Algunos endpoints requieren un ID en la ruta (topología, tramos, proyectos).</p>
+            </div>
+            <div class="card-back">
+                <span class="card-tag tag-code">Código</span>
+                <pre><code><span class="comment"># Endpoint con ID en la ruta</span>
+proyecto_id = 123
+endpoint = f<span class="string">"/proyectos/v1/{proyecto_id}"</span>
+
+params = {<span class="string">"user_key"</span>: API_KEY}
+resp = requests.get(BASE + endpoint, params=params)
+
+<span class="comment"># Topología con infotecnica_id</span>
+infotecnica_id = 456
+endpoint = f<span class="string">"/topologia/v3/energygen/{infotecnica_id}"</span>
+
+resp = requests.get(BASE + endpoint, params=params)</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECCIÓN: TIPS -->
+    <h2 class="section-title">💡 Tips y Buenas Prácticas</h2>
+
+    <div class="card" onclick="this.classList.toggle('flipped')">
+        <div class="card-inner">
+            <div class="card-front">
+                <span class="card-tag tag-tip">Tip</span>
+                <h3>No usar paginación manual</h3>
+                <p>A diferencia de otras APIs, incluir page/pageSize puede causar errores en esta API.</p>
+            </div>
+            <div class="card-back">
+                <span class="card-tag tag-tip">Detalle</span>
+                <pre><code><span class="comment"># ❌ EVITAR: causa error</span>
+params = {
+    <span class="string">"user_key"</span>: API_KEY,
+    <span class="string">"date"</span>: <span class="string">"2025-06-15"</span>,
+    <span class="string">"page"</span>: 0,         <span class="comment"># ← NO</span>
+    <span class="string">"pageSize"</span>: 100   <span class="comment"># ← NO</span>
+}
+<span class="comment"># Error: "Exceeded maximum number of pages"</span>
+
+<span class="comment"># ✅ CORRECTO: solo user_key + date</span>
+params = {
+    <span class="string">"user_key"</span>: API_KEY,
+    <span class="string">"date"</span>: <span class="string">"2025-06-15"</span>
+}</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <div class="card" onclick="this.classList.toggle('flipped')">
+        <div class="card-inner">
+            <div class="card-front">
+                <span class="card-tag tag-tip">Tip</span>
+                <h3>Formato de fecha: YYYY-MM-DD</h3>
+                <p>El parámetro date siempre debe ser una fecha en formato ISO: año-mes-día.</p>
+            </div>
+            <div class="card-back">
+                <span class="card-tag tag-tip">Ejemplos</span>
+                <pre><code><span class="comment"># ✅ Formatos correctos</span>
+<span class="string">"2025-06-15"</span>
+<span class="string">"2025-01-01"</span>
+f<span class="string">"2025-06-{day:02d}"</span>  <span class="comment"># con f-string</span>
+
+<span class="comment"># ❌ Formatos incorrectos</span>
+<span class="string">"15-06-2025"</span>   <span class="comment"># DD-MM-YYYY</span>
+<span class="string">"06/15/2025"</span>   <span class="comment"># MM/DD/YYYY</span>
+<span class="string">"2025-6-5"</span>     <span class="comment"># sin zero-padding</span>
+
+<span class="comment"># El parámetro se llama "date", NO:</span>
+<span class="comment"># "fecha", "fecha_inicio", "fecha_fin"</span></code></pre>
+            </div>
+        </div>
+    </div>
+
+    <div class="card" onclick="this.classList.toggle('flipped')">
+        <div class="card-inner">
+            <div class="card-front">
+                <span class="card-tag tag-tip">Tip</span>
+                <h3>Rate limiting y cortesía</h3>
+                <p>Cuando hagas múltiples consultas, considera agregar pausas para no saturar el servidor.</p>
+            </div>
+            <div class="card-back">
+                <span class="card-tag tag-code">Código</span>
+                <pre><code><span class="keyword">import</span> time
+
+<span class="keyword">for</span> day <span class="keyword">in</span> range(1, 31):
+    date_str = f<span class="string">"2025-06-{day:02d}"</span>
+    params = {<span class="string">"user_key"</span>: API_KEY, <span class="string">"date"</span>: date_str}
+    resp = requests.get(BASE + endpoint, params=params)
+
+    <span class="keyword">if</span> resp.status_code == 429:
+        print(<span class="string">"Rate limited! Esperando..."</span>)
+        time.sleep(60)
+        <span class="keyword">continue</span>
+
+    <span class="comment"># Pausa de cortesía entre requests</span>
+    time.sleep(0.5)</code></pre>
+                <p>El código 429 indica "Too Many Requests".</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<p class="flip-hint" style="margin-top: 2rem;">💡 Haz click en cualquier tarjeta para ver el código / detalle · Presiona ESC para cerrar todas</p>
+
+<script>
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            document.querySelectorAll('.card.flipped').forEach(c => c.classList.remove('flipped'));
+        }
+    });
+</script>
+
+</body>
+</html>
